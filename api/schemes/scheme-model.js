@@ -96,11 +96,22 @@ async function findById(scheme_id) { // EXERCISE B
       .select('sc.scheme_name', 'st.*')
       .where('sc.scheme_id', scheme_id)
       .orderBy('st.step_number')
-      return row
+
+      const result = {
+        scheme_id: row[0].scheme_id,
+        scheme_name: row[0].scheme_name,
+        instructions: row.reduce((steps, step) => {
+          if (!step.step_id) return steps
+          const { step_id, step_number, instructions } = step
+          return steps.concat({ step_id, step_number, instructions})
+        }, []),
+      }
+
+      return result
 }
 
 async function findSteps(scheme_id) { // EXERCISE C
-  return "foo"
+  
   /*
     1C- Build a query in Knex that returns the following data.
     The steps should be sorted by step_number, and the array
@@ -121,23 +132,42 @@ async function findSteps(scheme_id) { // EXERCISE C
         }
       ]
   */
+ const rows = await db('schemes as sc')
+ .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+ .select('st.step_id', 'st.step_number', 'st.instructions', 'sc.scheme_name')
+ .where('sc.scheme_id', scheme_id)
+ .orderBy('st.step_number')
+ return rows
 }
 
 async function add(scheme) { // EXERCISE D
-  return "foo"
+  const [id] = await db('schemes').insert(scheme).first()
+  return findById(id)
   /*
     1D- This function creates a new scheme and resolves to _the newly created scheme_.
   */
 }
 
 async function addStep(scheme_id, step) { // EXERCISE E
-  return "foo"
+  return db('steps').insert({
+    ...step,
+    scheme_id
+  })
+  .then(() => {
+    return db('steps as st')
+    .join('schemes as sc', 'sc.scheme_id', 'st.scheme_id')
+    .select('step_id', 'step_number', 'instructions', 'scheme_name')
+    .orderBy('step_number')
+    .where('sc.scheme_id', scheme_id)
+  })
+  
+}
+
   /*
     1E- This function adds a step to the scheme with the given `scheme_id`
     and resolves to _all the steps_ belonging to the given `scheme_id`,
     including the newly created one.
   */
-}
 
 module.exports = {
   find,

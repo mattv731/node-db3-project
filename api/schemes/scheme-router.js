@@ -80,15 +80,15 @@ router.get('/:scheme_id', /*checkSchemeId,*/ (req, res, next) => {
     }
   ]
 */
-// router.get('/:scheme_id/steps', checkSchemeId, (req, res, next) => {
-//   const { scheme_id } = req.params
+router.get('/:scheme_id/steps', /*checkSchemeId,*/ (req, res, next) => {
+  const { scheme_id } = req.params
 
-//   Schemes.findSteps(scheme_id)
-//     .then(steps => {
-//       res.json(steps)
-//     })
-//     .catch(next)
-// })
+  Schemes.findSteps(scheme_id)
+    .then(steps => {
+      res.json(steps)
+    })
+    .catch(next)
+})
 
 /*
   [POST] /api/schemes { "scheme_name": "Take Ovah" }
@@ -99,15 +99,15 @@ router.get('/:scheme_id', /*checkSchemeId,*/ (req, res, next) => {
     "scheme_name": "Take Ovah"
   }
 */
-// router.post('/', validateScheme, (req, res, next) => {
-//   const scheme = req.body
+router.post('/', /*validateScheme,*/ (req, res, next) => {
+  const scheme = req.body
 
-//   Schemes.add(scheme)
-//     .then(scheme => {
-//       res.status(201).json(scheme)
-//     })
-//     .catch(next)
-// })
+  Schemes.add(scheme)
+    .then(scheme => {
+      res.status(201).json(scheme)
+    })
+    .catch(next)
+})
 
 /*
   [POST] /api/schemes/5/steps { "instructions": "and yet more questing", "step_number": 2 }
@@ -128,16 +128,16 @@ router.get('/:scheme_id', /*checkSchemeId,*/ (req, res, next) => {
     }
   ]
 */
-// router.post('/:scheme_id/steps', checkSchemeId, validateStep, (req, res, next) => {
-//   const step = req.body
-//   const { scheme_id } = req.params
+router.post('/:scheme_id/steps', /*checkSchemeId, validateStep,*/ (req, res, next) => {
+  const step = req.body
+  const { scheme_id } = req.params
 
-//   Schemes.addStep(scheme_id, step)
-//     .then(allSteps => {
-//       res.status(201).json(allSteps)
-//     })
-//     .catch(next)
-// })
+  Schemes.addStep(scheme_id, step)
+    .then(allSteps => {
+      res.status(201).json(allSteps)
+    })
+    .catch(next)
+})
 
 router.use((err, req, res, next) => { // eslint-disable-line
   res.status(err.status || 500).json({
