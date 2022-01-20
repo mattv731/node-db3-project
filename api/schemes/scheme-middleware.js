@@ -39,7 +39,8 @@ const validateScheme = async (req, res, next) => {
   const { scheme_name } = await req.body
   try {
     if (!scheme_name || typeof scheme_name !== "string" || scheme_name === "") {
-      res.status(400).json({ message: "invalid scheme_name"})
+      next({ status: 400,
+      message: "invalid scheme_name"})
     } else {
       next()
     }
@@ -58,24 +59,26 @@ const validateScheme = async (req, res, next) => {
     "message": "invalid step"
   }
 */
-const validateStep = (req, res, next) => {
-  console.log('hello')
-  // const { instructions, step_number } = await req.body
-  // try {
-  //   if ( 
-  //   !instructions ||
-  //   instructions === '' ||
-  //   typeof instructions !== "string" ||
-  //   typeof step_number !== "number" ||
-  //   step_number < 1 ) {
-  //     res.status(400).json({ message: "invalid step"})
-  //   } else {
-  //     next()
-  //   }
-  // }
-  // catch (err) {
-  //   next(err)
-  // }
+const validateStep = async (req, res, next) => {
+  const { instructions, step_number } = await req.body
+  try {
+    if ( 
+    !instructions ||
+    instructions === '' ||
+    typeof instructions !== "string" ||
+    typeof step_number !== "number" ||
+    step_number < 1 ) {
+      next({
+        status: 400,
+        message: "invalid step"
+      })
+    } else {
+      next()
+    }
+  }
+  catch (err) {
+    next(err)
+  }
 }
 
 module.exports = {
