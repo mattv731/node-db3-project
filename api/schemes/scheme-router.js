@@ -1,6 +1,6 @@
 // DO NOT CHANGE THIS FILE
 const express = require('express')
-// const { checkSchemeId, validateScheme, validateStep } = require('./scheme-middleware')
+const { checkSchemeId, validateScheme, validateStep } = require('./scheme-middleware')
 const Schemes = require('./scheme-model.js')
 
 const router = express.Router()
@@ -51,9 +51,8 @@ router.get('/', (req, res, next) => {
     ]
   }
 */
-router.get('/:scheme_id', /*checkSchemeId,*/ (req, res, next) => {
+router.get('/:scheme_id', checkSchemeId, (req, res, next) => {
   const { scheme_id } = req.params
-
   Schemes.findById(scheme_id)
     .then(scheme => {
       res.json(scheme)
@@ -80,7 +79,7 @@ router.get('/:scheme_id', /*checkSchemeId,*/ (req, res, next) => {
     }
   ]
 */
-router.get('/:scheme_id/steps', /*checkSchemeId,*/ (req, res, next) => {
+router.get('/:scheme_id/steps', checkSchemeId, (req, res, next) => {
   const { scheme_id } = req.params
 
   Schemes.findSteps(scheme_id)
@@ -128,7 +127,7 @@ router.post('/', /*validateScheme,*/ (req, res, next) => {
     }
   ]
 */
-router.post('/:scheme_id/steps', /*checkSchemeId, validateStep,*/ (req, res, next) => {
+router.post('/:scheme_id/steps', checkSchemeId, /*validateStep,*/ (req, res, next) => {
   const step = req.body
   const { scheme_id } = req.params
 

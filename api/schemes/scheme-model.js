@@ -100,14 +100,17 @@ async function findById(scheme_id) { // EXERCISE B
       const result = {
         scheme_id: row[0].scheme_id,
         scheme_name: row[0].scheme_name,
-        instructions: row.reduce((steps, step) => {
-          if (!step.step_id) return steps
-          const { step_id, step_number, instructions } = step
-          return steps.concat({ step_id, step_number, instructions})
-        }, []),
+        steps: []
       }
-
-      return result
+      
+      row.forEach(step => {
+          if (row.step_id) {
+          const { step_id, step_number, instructions } = step
+          result.instructions.push({ step_id, step_number, instructions})
+          }
+        })
+      
+    return result
 }
 
 async function findSteps(scheme_id) { // EXERCISE C
@@ -141,7 +144,7 @@ async function findSteps(scheme_id) { // EXERCISE C
 }
 
 async function add(scheme) { // EXERCISE D
-  const [id] = await db('schemes').insert(scheme).first()
+  const [id] = await db('schemes').insert(scheme)
   return findById(id)
   /*
     1D- This function creates a new scheme and resolves to _the newly created scheme_.

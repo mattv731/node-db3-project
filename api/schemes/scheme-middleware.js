@@ -1,4 +1,4 @@
-const Scheme = require('./scheme-model')
+const db = require('../../data/db-config')
 /*
   If `scheme_id` does not exist in the database:
 
@@ -7,17 +7,22 @@ const Scheme = require('./scheme-model')
     "message": "scheme with scheme_id <actual id> not found"
   }
 */
-const checkSchemeId = async (req, res, next) => {
-  const { id } = req.params
-  console.log(id)
+const checkSchemeId = async(req, res, next) => {
   try {
-    const scheme = await Scheme.findById(id)
-    if (!scheme) {
-      res.status(404).json({ message: `scheme with scheme_id ${id} not found` })
+    const existing = await db('schemes')
+    .where('scheme_id', req.params.scheme_id)
+    .first()
+
+    if(!existing) {
+      next({ 
+        status: 404, 
+        message:`scheme with scheme_id ${req.params.scheme_id} not found`
+      })
     }
-    else {next()}
-  }
-  catch (err) {
+    else {
+      next()
+    }
+  } catch (err) {
     next(err)
   }
 }
@@ -54,22 +59,23 @@ const validateScheme = async (req, res, next) => {
   }
 */
 const validateStep = (req, res, next) => {
-  const { instructions, step_number } = await req.body
-  try {
-    if ( 
-    !instructions ||
-    instructions === '' ||
-    typeof instructions !== "string" ||
-    typeof step_number !== "number" ||
-    step_number < 1 ) {
-      res.status(400).json({ message: "invalid step"})
-    } else {
-      next()
-    }
-  }
-  catch (err) {
-    next(err)
-  }
+  console.log('hello')
+  // const { instructions, step_number } = await req.body
+  // try {
+  //   if ( 
+  //   !instructions ||
+  //   instructions === '' ||
+  //   typeof instructions !== "string" ||
+  //   typeof step_number !== "number" ||
+  //   step_number < 1 ) {
+  //     res.status(400).json({ message: "invalid step"})
+  //   } else {
+  //     next()
+  //   }
+  // }
+  // catch (err) {
+  //   next(err)
+  // }
 }
 
 module.exports = {
