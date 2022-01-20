@@ -91,22 +91,25 @@ async function findById(scheme_id) { // EXERCISE B
         "steps": []
       }
   */
- const row = await db('schemes as sc')
+ const rows = await db('schemes as sc')
       .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
-      .select('sc.scheme_name', 'st.*')
       .where('sc.scheme_id', scheme_id)
+      .select('st.*','sc.scheme_name', 'sc.scheme_id')
       .orderBy('st.step_number')
 
       const result = {
-        scheme_id: row[0].scheme_id,
-        scheme_name: row[0].scheme_name,
+        scheme_id: rows[0].scheme_id,
+        scheme_name: rows[0].scheme_name,
         steps: []
       }
       
-      row.forEach(step => {
+      rows.forEach(row => {
           if (row.step_id) {
-          const { step_id, step_number, instructions } = step
-          result.instructions.push({ step_id, step_number, instructions})
+            result.steps.push({
+              step_id: row.step_id,
+              step_number: row.step_number,
+              instructions: row.instructions
+            })
           }
         })
       
@@ -137,9 +140,11 @@ async function findSteps(scheme_id) { // EXERCISE C
   */
  const rows = await db('schemes as sc')
  .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
- .select('st.step_id', 'st.step_number', 'st.instructions', 'sc.scheme_name')
+ .select('st.step_id', 'st.step_number', 'instructions', 'sc.scheme_name')
  .where('sc.scheme_id', scheme_id)
- .orderBy('st.step_number')
+ .orderBy('step_number')
+
+ if(!rows[0].step_id) return []
  return rows
 }
 
